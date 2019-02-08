@@ -1,165 +1,118 @@
-String numero;
-int fase1;
-int fase2;
-int fase3;
-int fase4;
-int lampeggio;
-int Rosso1 = 13;
-int Giallo1 = 12;
-int Verde1 = 11;
-int Verde2 = 4;
-int Giallo2 = 3;
-int Rosso2 = 2;
+int semaforo;
+int giallo;
+int nLampeggi;
+int tLampeggi;
+int resto;
+int rosso1 = 13;
+int giallo1 = 12;
+int verde1 = 11;
+int verde2 = 4;
+int giallo2 = 3;
+int rosso2 = 2;
 
 void setup() {
   // put your setup code here, to run once:
-  pinMode(Rosso1, OUTPUT);
-  pinMode(Giallo1, OUTPUT);
-  pinMode(Verde1, OUTPUT);
-  pinMode(Verde2, OUTPUT);
-  pinMode(Giallo2, OUTPUT);
-  pinMode(Rosso2, OUTPUT);
+  pinMode(rosso1, OUTPUT);
+  pinMode(giallo1, OUTPUT);
+  pinMode(verde1, OUTPUT);
+  pinMode(verde2, OUTPUT);
+  pinMode(giallo2, OUTPUT);
+  pinMode(rosso2, OUTPUT);
   Serial.begin(9600);
 }
 
 void loop() {
   // put your main code here, to run repeatedly:
-  Input();
-  Fase1();
-  Fase2();
-  Fase3();
-  Fase4();
+  tempi();
+  resto = semaforo - ((tLampeggi * 2 * nLampeggi) + giallo);
+  controllo();
+  fase1();
+  fase2();
+  fase3();
+  fase4();
 }
 
-void Input()
+void tempi()
 {
-  if (Serial.available() > 0)
+  Serial.print("Inserire la durata del semaforo");
+  while(Serial.available() == 0) {}
+  int semaforo = Serial.readString().toInt();
+  Serial.print("Inserire la durata del giallo");
+  while(Serial.available() == 0) {}
+  int giallo = Serial.readString().toInt();
+  Serial.print("Inserire il numero di lampeggi");
+  while(Serial.available() == 0) {}
+  int nLampeggi = Serial.readString().toInt();
+  Serial.print("Inserire la durata dei lampeggi");
+  while(Serial.available() == 0) {}
+  int tLampeggi = Serial.readString().toInt();
+}
+
+void controllo()
+{
+  if(semaforo < tLampeggi && semaforo < giallo && semaforo < resto)
   {
-    for (int i = 0; i < 5; i++)
-    {
-      if (i == 0)
-      {
-        Serial.print("Inserire il delay");
-        while (numero == "")
-        {
-          numero = Serial.readString();
-        }
-        fase1 = numero.toInt();
-      }
-      if (i == 1)
-      {
-        Serial.print("Inserire il delay");
-        while (numero == "")
-        {
-          numero = Serial.readString();
-        }
-        fase2 = numero.toInt();
-      }
-      if (i == 2)
-      {
-        Serial.print("Inserire il delay");
-        while (numero == "")
-        {
-          numero = Serial.readString();
-        }
-        fase3 = numero.toInt();
-      }
-      if (i == 3)
-      {
-        Serial.print("Inserire il delay");
-        while (numero == "")
-        {
-          numero = Serial.readString();
-        }
-        fase4 = numero.toInt();
-      }
-      if (i == 4)
-      {
-        Serial.print("Inserire il delay del lampeggio");
-        while (numero == "")
-        {
-          numero = Serial.readString();
-        }
-        lampeggio = numero.toInt();
-      }
-    }
+    Serial.println("ERRORE");
   }
+  while(Serial.available() == 0) {}
 }
 
-void Fase1()
+void fase1()
 {
-  digitalWrite(Rosso1, HIGH);
-  digitalWrite(Verde2, HIGH);
-  delay(fase1);//2500
-  Lampeggio2();
+  digitalWrite(rosso1, HIGH);
+  digitalWrite(verde2, HIGH);
+  delay(resto);
+  lampeggio2();
 }
 
-void Fase2()
+void fase2()
 {
-  digitalWrite(Giallo1, HIGH);
-  digitalWrite(Giallo2, HIGH);
-  delay(fase2);//750
+  digitalWrite(giallo1, HIGH);
+  digitalWrite(giallo2, HIGH);
+  delay(giallo);
 }
 
-void Fase3()
+void fase3()
 {
-  digitalWrite(Rosso1, LOW);
-  digitalWrite(Giallo1, LOW);
-  digitalWrite(Giallo2, LOW);
-  digitalWrite(Rosso2, HIGH);
-  digitalWrite(Verde1, HIGH);
-  delay(fase3);//2500
-  Lampeggio1();
+  digitalWrite(rosso1, LOW);
+  digitalWrite(giallo1, LOW);
+  digitalWrite(giallo2, LOW);
+  digitalWrite(rosso2, HIGH);
+  digitalWrite(verde1, HIGH);
+  delay(resto);
+  lampeggio1();
 }
 
-void Fase4()
+void fase4()
 {
-  digitalWrite(Giallo2, HIGH);
-  digitalWrite(Giallo1, HIGH);
-  delay(fase1);//750
-  digitalWrite(Rosso2, LOW);
-  digitalWrite(Giallo2, LOW);
-  digitalWrite(Giallo1, LOW);
+  digitalWrite(giallo2, HIGH);
+  digitalWrite(giallo1, HIGH);
+  delay(giallo);
+  digitalWrite(rosso2, LOW);
+  digitalWrite(giallo2, LOW);
+  digitalWrite(giallo1, LOW);
 }
 
-void Lampeggio1()
+void lampeggio1()
 {
-  digitalWrite(11, LOW);
-  delay(lampeggio);//200
-  digitalWrite(11, HIGH);
-  delay(lampeggio);
-  digitalWrite(11, LOW);
-  delay(lampeggio);
-  digitalWrite(11, HIGH);
-  delay(lampeggio);
-  digitalWrite(11, LOW);
-  delay(lampeggio);
-  digitalWrite(11, HIGH);
-  delay(lampeggio);
-  digitalWrite(11, LOW);
-  delay(lampeggio);
-  digitalWrite(11, HIGH);
-  delay(lampeggio);
-  digitalWrite(11, LOW);
+  for(int i = 0; i < nLampeggi; i++)
+  {
+    digitalWrite(verde1, LOW);
+    delay(tLampeggi);
+    digitalWrite(verde1, HIGH);
+    delay(tLampeggi);
+  }
+  digitalWrite(verde1, LOW);
 }
 
-void Lampeggio2()
+void lampeggio2()
 {
-  digitalWrite(4, LOW);
-  delay(lampeggio);
-  digitalWrite(4, HIGH);
-  delay(lampeggio);
-  digitalWrite(4, LOW);
-  delay(lampeggio);
-  digitalWrite(4, HIGH);
-  delay(lampeggio);
-  digitalWrite(4, LOW);
-  delay(lampeggio);
-  digitalWrite(4, HIGH);
-  delay(lampeggio);
-  digitalWrite(4, LOW);
-  delay(lampeggio);
-  digitalWrite(4, HIGH);
-  delay(lampeggio);
-  digitalWrite(4, LOW);
+  for(int i = 0; i < nLampeggi; i++)
+  {
+    digitalWrite(verde2, LOW);
+    delay(tLampeggi);
+    digitalWrite(verde2, HIGH);
+    delay(tLampeggi);
+  }
+  digitalWrite(verde2, LOW);
 }
