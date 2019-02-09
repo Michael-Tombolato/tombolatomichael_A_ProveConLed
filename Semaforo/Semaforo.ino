@@ -24,7 +24,7 @@ void setup() {
 void loop() {
   // put your main code here, to run repeatedly:
   tempi();
-  resto = semaforo - ((tLampeggi * 2 * nLampeggi) + giallo);
+  resto = semaforo / 2 - ((tLampeggi * 2 * nLampeggi) + giallo);
   controllo();
   fase1();
   fase2();
@@ -34,27 +34,30 @@ void loop() {
 
 void tempi()
 {
-  Serial.print("Inserire la durata del semaforo");
+  Serial.println("Inserire la durata del semaforo");
   while(Serial.available() == 0) {}
-  int semaforo = Serial.readString().toInt();
-  Serial.print("Inserire la durata del giallo");
+  semaforo = Serial.readString().toInt();
+  Serial.println(semaforo);
+  Serial.println("Inserire la durata del giallo");
   while(Serial.available() == 0) {}
-  int giallo = Serial.readString().toInt();
-  Serial.print("Inserire il numero di lampeggi");
+  giallo = Serial.readString().toInt();
+  Serial.println(giallo);
+  Serial.println("Inserire il numero di lampeggi");
   while(Serial.available() == 0) {}
-  int nLampeggi = Serial.readString().toInt();
-  Serial.print("Inserire la durata dei lampeggi");
+  nLampeggi = Serial.readString().toInt();
+  Serial.println(nLampeggi);
+  Serial.println("Inserire la durata dei lampeggi");
   while(Serial.available() == 0) {}
-  int tLampeggi = Serial.readString().toInt();
+  tLampeggi = Serial.readString().toInt();
+  Serial.println(tLampeggi);
 }
 
-void controllo()
+String controllo()
 {
-  if(semaforo < tLampeggi && semaforo < giallo && semaforo < resto)
+  if(semaforo < tLampeggi || semaforo < giallo || semaforo < resto)
   {
     Serial.println("ERRORE");
   }
-  while(Serial.available() == 0) {}
 }
 
 void fase1()
